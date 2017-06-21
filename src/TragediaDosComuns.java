@@ -10,7 +10,7 @@ public class TragediaDosComuns {
 		
 		//for(int i = 3; i < 11; i++)
 		//{
-		int i = 5;
+		int i = 3;
 		boolean regraAdicional = true;
 			int turnos = 0;
 			int vitoria = 0;

@@ -7,6 +7,7 @@ public class Peixe {
 	public int[] pescadores;
 	public int pescados;
 	public int dificuldade;
+	public int extincao;
 	
 	public Peixe(int nivel0, int nivel1, int nivel2, int nivel3, int valor, int dificuldade, int jogadores)
 	{
@@ -15,6 +16,26 @@ public class Peixe {
 		niveis[1] = nivel1;
 		niveis[2] = nivel2;
 		niveis[3] = nivel3;
+		this.valor = valor;
+		defeso = false;
+		nivelAtual = 1;
+		pescadores = new int[jogadores];
+		pescados = 0;
+		this.dificuldade = dificuldade;
+	}
+	
+	public int getExtincao() {
+		return extincao;
+	}
+
+	public void setExtincao(int extincao) {
+		this.extincao = extincao;
+	}
+
+	public Peixe(int extincao, int valor, int dificuldade, int jogadores)
+	{
+		niveis = new int[4];
+		this.extincao = extincao;
 		this.valor = valor;
 		defeso = false;
 		nivelAtual = 1;
