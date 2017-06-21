@@ -10,12 +10,13 @@ public class TragediaDosComunsAtualizada {
 		
 		//for(int i = 3; i < 11; i++)
 		//{
-		int i = 5;
-		boolean regraAdicional = true;
+			int i = 5;
+			boolean regraAdicional = true;
 			int turnos = 0;
 			int vitoria = 0;
 			int fracasso = 0;
 			int[] resultados;
+			
 			for(int j=0; j<10; j++)
 			{
 				resultados = jogo(i, regraAdicional);
@@ -34,13 +35,26 @@ public class TragediaDosComunsAtualizada {
 		Random rand = new Random();
 		int turnos = 0;
 		int defeso = 0;
+		int cooperacao = 0;
+		int cogestao = 0;
+		int sustentabilidade = 0;
+		int beneficiamento = 0;
+		int projetoBloqueado = 100;
+		boolean educacaoAmbiental = false;
+		boolean incubadora = false;
+		boolean[] cooperativa = new boolean[pescadores.length];
+		boolean barcoAvariado = false;
+		
+		for(int i=0; i<cooperativa.length; i++)
+		{
+			cooperativa[i] = false;
+		}
 		
 		pescadores = new Pescador[jogadores];
 		
 		//ADHOC Valores da pesca
 		
 		int[] extincao = {4, 5, 6, 7};	
-		
 		int[] valores = {11, 7, 5, 3};
 		
 		for(int i=0;i<pescadores.length;i++)
@@ -55,22 +69,158 @@ public class TragediaDosComunsAtualizada {
 				
 		while(!(faliu()||extinguiu()))
 		{			
+			int papesca = 0;
+			int melhorProjeto = 0;
+			beneficiamento = 0;
+			
 			peixes[defeso].setDefeso(true);
 			//System.out.println(turnos+" "+pescadores[0].getTokens());
-		
+			
+			//tirando cartas de eventos
+			for(int i = 0; i < pescadores.length; i++)
+			{
+				int evento = rand.nextInt(12);
+				
+				if(evento == 0)
+				{
+					acidenteDeTrabalho(i);
+				}
+				if((evento == 1)&&!(educacaoAmbiental))
+				{
+					poluicao();
+				}
+				if(evento == 2)
+				{
+					barcoAvariado(barcoAvariado);
+				}
+				if(evento == 3)
+				{
+					trafico();
+				}
+				if(evento == 4)
+				{
+					problemasFamiliares1(i);
+				}
+				if(evento == 5)
+				{
+					problemasFamiliares2(i);
+				}
+				if(evento == 6)
+				{
+					problemasFamiliares3(i);
+				}
+				if(evento == 7)
+				{
+					projetoBloqueado = conflitosInteresseUFRJ(cooperacao);
+				}
+				if(evento == 8)
+				{
+					pescaPredatoriaA();
+				}
+				if(evento == 9)
+				{
+					pescaPredatoriaB();
+				}
+				if(evento == 10)
+				{
+					pescaPredatoriaC();
+				}
+				if(evento == 11)
+				{
+					pescaPredatoriaD();
+				}
+			}
+			
 			//decidindo as ações
 			for(int i=0; i < pescadores.length; i++)
 			{
 				for(int j=0; j < pescadores[i].getTokens(); j++)
 				{
 					int jogada = rand.nextInt(5);
+				
+					//papesca
+					if(jogada == 0)
+					{
+						papesca++;
+						
+						boolean ufrj = false;
+						while(!ufrj)
+						{
+							int projeto = rand.nextInt(6);
+							
+							//gestão social da pesca
+							if((projeto == 0)&&!(pescadores[i].isEes())&&!(projetoBloqueado==0))
+							{
+								pescadores[i].setEes(true);
+								ufrj = true;
+							}
+							
+							//curso de navegação
+							if((projeto == 1)&&!(pescadores[i].isCapitao())&&!(projetoBloqueado==1))
+							{
+								pescadores[i].setCapitao(true);
+								ufrj = true;
+							}
+							
+							//beneficiamento de pescado
+							if((projeto == 2)&&(pescadores[i].isEes())&&!(projetoBloqueado==1))
+							{
+								beneficiamento = 1;
+								ufrj = true;
+							}
+							
+							//educação ambiental
+							if((projeto == 3)&&!(projetoBloqueado==2))
+							{
+								educacaoAmbiental = true;
+								ufrj = true;
+							}
+							
+							//beneficiamento de pescado
+							if((projeto == 4)&&(beneficiamento == 1)&&!(projetoBloqueado==2))
+							{
+								beneficiamento = 2;
+								ufrj = true;
+							}
+							
+							//cooperativa
+							if((projeto == 5)&&(pescadores[i].isRegularizado())&&(pescadores[i].isEes())&&(existeCapitao())&&!(projetoBloqueado==3))
+							{
+								incubadora = true;
+								cooperativa[i] = true;
+								ufrj = true;
+							}
+					}
+					
+					//pescando
 					if(jogada > 0)
 					{
 						peixes[jogada-1].setPescadores(i);
 					}
 				}
 			}
-						
+		}
+				
+			//ajustando cooperação, cogestão e sustentabilidade
+			if(papesca >= pescadores.length/2){cooperacao++;}
+			else
+			{
+				if(cooperacao > 0){cooperacao--;}
+			}
+			
+			if(papesca == pescadores.length){cogestao--;}
+			else
+			{
+				if(cogestao > 0){cogestao--;}
+			}
+			
+			if(cogestao == 3)
+			{
+				cogestao = 0;
+				sustentabilidade++;
+			}
+					
+			
 			//pescando
 			for(int i = 0; i < peixes.length; i++)
 			{
@@ -83,7 +233,15 @@ public class TragediaDosComunsAtualizada {
 						{
 							//System.out.println("Pescador "+j+" pescou o peixe "+i+" e ficou com "+(pescadores[j].getTemer()+peixes[i].getValor()));
 							peixes[i].setPescados(peixes[i].getPescados()+1);
-							pescadores[j].setTemer(pescadores[j].getTemer()+peixes[i].getValor());
+							
+							if((cooperativa[j])&&!(barcoAvariado))
+							{
+								pescadores[j].setTemer(pescadores[j].getTemer()+2*(peixes[i].getValor())+beneficiamento);
+							}
+							else
+							{
+								pescadores[j].setTemer(pescadores[j].getTemer()+peixes[i].getValor()+beneficiamento);
+							}
 						}
 					}
 				}
@@ -108,8 +266,9 @@ public class TragediaDosComunsAtualizada {
 			{
 				for(int i=0; i< pescadores.length; i++)
 				{
-					pescadores[i].setPontosDeVitoria(pescadores[i].getTemer());
+					pescadores[i].setPontosDeVitoria(pescadores[i].getTemer()/4);
 					pescadores[i].setTemer(0);
+					//pescadores[i].setTemer(resto da divisão pescadores[i].getTemer()/4);
 				}
 			}
 			
@@ -154,6 +313,7 @@ public class TragediaDosComunsAtualizada {
 				}
 			}
 			turnos++;
+			barcoAvariado = false;
 			
 			peixes[defeso].setDefeso(false);
 			
@@ -243,7 +403,7 @@ public class TragediaDosComunsAtualizada {
 	{
 		int especie = 0;
 		
-		for(int i=0; i<=peixes.length; i++)
+		for(int i=0; i<peixes.length; i++)
 		{
 			if(peixes[i].getNivelAtual()<=especie)
 			{
@@ -254,15 +414,23 @@ public class TragediaDosComunsAtualizada {
 		peixes[especie].setNivelAtual(peixes[especie].getNivelAtual()+1);
 	}
 	
-	public static void barcoAvariado()
+	public static void barcoAvariado(boolean barcoAvariado)
 	{
+		barcoAvariado = true;
 	}
 	
 	public static void trafico()
 	{
-		for(int i=0; i<=pescadores.length; i++)
+		for(int i=0; i<pescadores.length; i++)
 		{
-			pescadores[i].setTemer(pescadores[i].getTemer()-pescadores[i].getPontosDeCarencia());
+			if(pescadores[i].getTemer()>pescadores[i].getPontosDeCarencia())
+			{
+				pescadores[i].setTemer(pescadores[i].getTemer()-pescadores[i].getPontosDeCarencia());
+			}
+			else
+			{
+				pescadores[i].setTemer(0);
+			}
 		}
 	}
 	
@@ -281,8 +449,15 @@ public class TragediaDosComunsAtualizada {
 		pescadores[pescador].setTemer(pescadores[pescador].getTemer()-3);
 	}
 	
-	public static void conflitosInteresseUFRJ()
+	public static int conflitosInteresseUFRJ(int projetoBloqueado)
 	{
+		if(projetoBloqueado == 0){return 0;}
+		if(projetoBloqueado == 1){return 1;}
+		if(projetoBloqueado == 2){return 1;}
+		if(projetoBloqueado == 3){return 2;}
+		if(projetoBloqueado == 4){return 2;}
+		if(projetoBloqueado == 5){return 3;}
+		return 0;
 	}
 	
 	public static void pescaPredatoriaA()
@@ -303,5 +478,14 @@ public class TragediaDosComunsAtualizada {
 	public static void pescaPredatoriaD()
 	{
 		peixes[3].setNivelAtual(peixes[3].getNivelAtual()+1);
+	}
+	
+	public static boolean existeCapitao()
+	{
+		for(int i=0; i<pescadores.length; i++)
+		{
+			if(pescadores[i].isCapitao()){return true;}
+		}
+		return false;
 	}
 }

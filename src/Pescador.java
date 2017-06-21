@@ -5,6 +5,10 @@ public class Pescador {
 	public int tokens;
 	public int pontosDeVitoria;
 	public int pontosDeCarencia;
+	public boolean ees;
+	public boolean capitao;
+	public boolean regularizado;
+	public boolean alfabetizacao;
 	
 	public Pescador()
 	{
@@ -12,6 +16,42 @@ public class Pescador {
 		tokens = 5;
 		pontosDeVitoria = 0;
 		pontosDeCarencia = 0;
+		ees = false;
+		capitao = false;
+		regularizado = false;
+		alfabetizacao = false;
+	}
+
+	public boolean isAlfabetizacao() {
+		return alfabetizacao;
+	}
+
+	public void setAlfabetizacao(boolean alfabetizacao) {
+		this.alfabetizacao = alfabetizacao;
+	}
+
+	public boolean isCapitao() {
+		return capitao;
+	}
+
+	public void setCapitao(boolean capitao) {
+		this.capitao = capitao;
+	}
+
+	public boolean isRegularizado() {
+		return regularizado;
+	}
+
+	public void setRegularizado(boolean regularizado) {
+		this.regularizado = regularizado;
+	}
+
+	public boolean isEes() {
+		return ees;
+	}
+
+	public void setEes(boolean ees) {
+		this.ees = ees;
 	}
 
 	public int getPontosDeCarencia() {
