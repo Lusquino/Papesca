@@ -4,12 +4,22 @@ public class Pescador {
 	public int temer;
 	public int tokens;
 	public int pontosDeVitoria;
+	public int pontosDeCarencia;
 	
 	public Pescador()
 	{
 		temer = 0;
 		tokens = 5;
 		pontosDeVitoria = 0;
+		pontosDeCarencia = 0;
+	}
+
+	public int getPontosDeCarencia() {
+		return pontosDeCarencia;
+	}
+
+	public void setPontosDeCarencia(int pontosDeCarencia) {
+		this.pontosDeCarencia = pontosDeCarencia;
 	}
 
 	public int getPontosDeVitoria() {

@@ -233,4 +233,75 @@ public class TragediaDosComunsAtualizada {
 		
 		return piorJogador;
 	}
+	
+	public static void acidenteDeTrabalho(int pescador)
+	{
+		pescadores[pescador].setTokens(pescadores[pescador].getTokens()-1);
+	}
+	 
+	public static void poluicao()
+	{
+		int especie = 0;
+		
+		for(int i=0; i<=peixes.length; i++)
+		{
+			if(peixes[i].getNivelAtual()<=especie)
+			{
+				especie = i;
+			}
+		}
+		
+		peixes[especie].setNivelAtual(peixes[especie].getNivelAtual()+1);
+	}
+	
+	public static void barcoAvariado()
+	{
+	}
+	
+	public static void trafico()
+	{
+		for(int i=0; i<=pescadores.length; i++)
+		{
+			pescadores[i].setTemer(pescadores[i].getTemer()-pescadores[i].getPontosDeCarencia());
+		}
+	}
+	
+	public static void problemasFamiliares1(int pescador)
+	{
+		pescadores[pescador].setTemer(pescadores[pescador].getTemer()-1);
+	}
+	
+	public static void problemasFamiliares2(int pescador)
+	{
+		pescadores[pescador].setTemer(pescadores[pescador].getTemer()-2);
+	}
+	
+	public static void problemasFamiliares3(int pescador)
+	{
+		pescadores[pescador].setTemer(pescadores[pescador].getTemer()-3);
+	}
+	
+	public static void conflitosInteresseUFRJ()
+	{
+	}
+	
+	public static void pescaPredatoriaA()
+	{
+		peixes[0].setNivelAtual(peixes[0].getNivelAtual()+1);
+	}
+	
+	public static void pescaPredatoriaB()
+	{
+		peixes[1].setNivelAtual(peixes[1].getNivelAtual()+1);
+	}
+	
+	public static void pescaPredatoriaC()
+	{
+		peixes[2].setNivelAtual(peixes[2].getNivelAtual()+1);
+	}
+	
+	public static void pescaPredatoriaD()
+	{
+		peixes[3].setNivelAtual(peixes[3].getNivelAtual()+1);
+	}
 }
