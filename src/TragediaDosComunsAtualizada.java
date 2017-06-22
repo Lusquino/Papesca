@@ -7,7 +7,7 @@ public class TragediaDosComunsAtualizada {
 	
 	public static void main(String[] args) {
 			int jogadores = 5;
-			int partidas = 10;
+			int partidas = 1;
 			int turnos = 0;
 			int vitoria = 0;
 			int sustentabilidade = 0;
@@ -32,14 +32,14 @@ public class TragediaDosComunsAtualizada {
 				fracasso += resultados[2];
 				sustentabilidade += resultados[3];
 				cooperacao += resultados[4];
-				peixeAPescado = resultados[9];
-				peixeAExtinto = resultados[5];
-				peixeBPescado = resultados[10];
-				peixeBExtinto = resultados[6];
-				peixeCPescado = resultados[11];
-				peixeCExtinto = resultados[7];
-				peixeDPescado = resultados[12];
-				peixeDExtinto = resultados[8];
+				peixeAPescado += resultados[9];
+				peixeAExtinto += resultados[5];
+				peixeBPescado += resultados[10];
+				peixeBExtinto += resultados[6];
+				peixeCPescado += resultados[11];
+				peixeCExtinto += resultados[7];
+				peixeDPescado += resultados[12];
+				peixeDExtinto += resultados[8];
 			}
 		
 			System.out.println("Com " + jogadores + " jogadores, a média de turnos para o jogo acabar foi de "
@@ -49,14 +49,14 @@ public class TragediaDosComunsAtualizada {
 			
 			System.out.println("\nEstatísticas médias:");
 			
-			System.out.println("O peixe A foi pescado " + peixeAPescado + " vezes e atingiu a taxa de extinção " 
-					+ peixeAExtinto);
-			System.out.println("O peixe B foi pescado " + peixeBPescado + " vezes e atingiu a taxa de extinção " 
-					+ peixeBExtinto);
-			System.out.println("O peixe C foi pescado " + peixeCPescado + " vezes e atingiu a taxa de extinção " 
-					+ peixeCExtinto);
-			System.out.println("O peixe D foi pescado " + peixeDPescado + " vezes e atingiu a taxa de extinção " 
-					+ peixeDExtinto);
+			System.out.println("O peixe A foi pescado " + (peixeAPescado/partidas) 
+					+ " vezes e atingiu a taxa de extinção " + (peixeAExtinto/partidas));
+			System.out.println("O peixe B foi pescado " + (peixeBPescado/partidas)
+					+ " vezes e atingiu a taxa de extinção " + (peixeBExtinto/partidas));
+			System.out.println("O peixe C foi pescado " + (peixeCPescado/partidas)
+					+ " vezes e atingiu a taxa de extinção " + (peixeCExtinto/partidas));
+			System.out.println("O peixe D foi pescado " + (peixeDPescado/partidas)
+					+ " vezes e atingiu a taxa de extinção " + (peixeDExtinto/partidas));
 	}
 	
 	public static int[] jogo(int jogadores, boolean regraAdicional)
@@ -96,9 +96,8 @@ public class TragediaDosComunsAtualizada {
 			peixes[i] = new Peixe(extincao[i],valores[i], 5-i, jogadores);
 		}
 				
-		while(!(faliu()||extinguiu()||(sustentabilidade>3)))
+		while(!((faliu())||(extinguiu())||(sustentabilidade>3)))
 		{			
-			int papesca = 0;
 			beneficiamento = 0;
 			
 			peixes[defeso].setDefeso(true);
@@ -161,14 +160,15 @@ public class TragediaDosComunsAtualizada {
 			//decidindo as ações
 			for(int i=0; i < pescadores.length; i++)
 			{
+				int papesca = 0;
 				for(int j=0; j < pescadores[i].getTokens(); j++)
 				{
-					int jogada = rand.nextInt(5);
+					int jogada = rand.nextInt(6);
 				
 					//papesca
 					if(jogada == 0)
 					{
-						papesca++;
+						papesca = 0;
 						
 						boolean ufrj = false;
 						while(!ufrj)
@@ -221,10 +221,41 @@ public class TragediaDosComunsAtualizada {
 					}
 					
 					//pescando
-					if(jogada > 0)
+					if((jogada > 0)&&(jogada<=4))
 					{
 						peixes[jogada-1].setPescadores(i);
 					}
+					
+					//eja e colonia de pescadores
+					if((jogada == 5)&&!(pescadores[i].isAlfabetizacao())&&!(pescadores[i].isAlfabetizando()))
+					{
+						pescadores[i].setAlfabetizando(true);
+					}
+					if((jogada == 5)&&!(pescadores[i].isAlfabetizacao())&&(pescadores[i].isAlfabetizando()))
+					{
+						pescadores[i].setAlfabetizacao(true);
+					}
+					if((jogada == 5)&&(pescadores[i].isAlfabetizacao())&&!(pescadores[i].isAlfabetizacao()))
+					{
+						pescadores[i].setRegularizado(true);
+					}
+					if((jogada == 5)&&(pescadores[i].isAlfabetizacao())&&!(pescadores[i].isAlfabetizacao()))
+					{
+						pescadores[i].setRegularizado(true);
+					}
+					if((jogada == 5)&&(pescadores[i].isAlfabetizacao())&&(pescadores[i]).isRegularizado())
+					{
+						if(pescadores[i].getTemer() >= 4)
+						{
+							pescadores[i].setTemer(pescadores[i].getTemer()-4);
+						}
+						else
+						{
+							pescadores[i].setTemer(0);
+							pescadores[i].setCapitao(true);
+						}
+					}
+																																 																																																																																																																																							}
 				}
 			}
 			
@@ -233,6 +264,7 @@ public class TragediaDosComunsAtualizada {
 				System.out.println(peixes[i].getPescados());
 			}*/
 				
+			
 			//ajustando cooperação, cogestão e sustentabilidade
 			if(papesca >= pescadores.length/2){cooperacao++;}
 			else
@@ -318,21 +350,31 @@ public class TragediaDosComunsAtualizada {
 			//verificando se desceu a taxa de extinção
 			for(int i = 0; i < peixes.length; i++)
 			{
+				System.out.println("Entrou na verificação do peixe " + i + " com " + peixes[i].getPescados());
+				
 				int extintos = 0;
 				for(int j=0; j < peixes[i].getPescados(); j++)
 				{
-					int jogada = rand.nextInt(5);
+					int jogada = rand.nextInt(5); 
 					if(jogada <= 1) {extintos++;}
 				}
+				
+				System.out.println("E a extinção foi de "+ extintos);
                 if(extintos>peixes[i].getExtincao())
 				{
+                	System.out.println("passou");
 					if(peixes[i].getNivelAtual()<3)
 					{
+						System.out.println("passou e peixe "+i+" está com " + peixes[i].getNivelAtual());
 						peixes[i].setNivelAtual(peixes[i].getNivelAtual()+1);
 					}
 				}
+                System.out.println("pescado:"+peixes[i].getPescados()+ " / extinguiu " +  extintos +
+                		 " / extinção:" + peixes[i].getNivelAtual());
 			}
 			
+			
+			//defeso
 			for(int i= 0; i < peixes.length; i++)
 			{
 				if(peixes[i].isDefeso())
@@ -378,6 +420,7 @@ public class TragediaDosComunsAtualizada {
 				}
 				
 				peixes[i].setPescadores(pescadoresZerados);
+				peixes[i].setPescados(0);
 			}
 		}
 		
@@ -412,7 +455,7 @@ public class TragediaDosComunsAtualizada {
 	{
 		for(int i=0; i <peixes.length;i++)
 		{
-			if(peixes[i].getNivelAtual()==3){return true;}
+			if(peixes[i].getNivelAtual()==4){return true;}
 		}
 		return false;
 	}
@@ -464,7 +507,10 @@ public class TragediaDosComunsAtualizada {
 			}
 		}
 		
-		peixes[especie].setNivelAtual(peixes[especie].getNivelAtual()+1);
+		if(peixes[especie].getNivelAtual() < 3)
+		{
+			peixes[especie].setNivelAtual(peixes[especie].getNivelAtual()+1);
+		}
 	}
 	
 	public static void barcoAvariado(boolean barcoAvariado)
@@ -515,22 +561,34 @@ public class TragediaDosComunsAtualizada {
 	
 	public static void pescaPredatoriaA()
 	{
-		peixes[0].setNivelAtual(peixes[0].getNivelAtual()+1);
+		if(peixes[0].getNivelAtual() < 3)
+		{
+			peixes[0].setNivelAtual(peixes[0].getNivelAtual()+1);
+		}
 	}
 	
 	public static void pescaPredatoriaB()
 	{
-		peixes[1].setNivelAtual(peixes[1].getNivelAtual()+1);
+		if(peixes[1].getNivelAtual() < 3)
+		{
+			peixes[1].setNivelAtual(peixes[1].getNivelAtual()+1);
+		}
 	}
 	
 	public static void pescaPredatoriaC()
 	{
-		peixes[2].setNivelAtual(peixes[2].getNivelAtual()+1);
+		if(peixes[2].getNivelAtual() < 3)
+		{
+			peixes[2].setNivelAtual(peixes[2].getNivelAtual()+1);
+		}
 	}
 	
 	public static void pescaPredatoriaD()
 	{
-		peixes[3].setNivelAtual(peixes[3].getNivelAtual()+1);
+		if(peixes[3].getNivelAtual() < 3)
+		{
+			peixes[3].setNivelAtual(peixes[3].getNivelAtual()+1);
+		}
 	}
 	
 	public static boolean existeCapitao()

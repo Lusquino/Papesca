@@ -9,6 +9,7 @@ public class Pescador {
 	public boolean capitao;
 	public boolean regularizado;
 	public boolean alfabetizacao;
+	public boolean alfabetizando;
 	
 	public Pescador()
 	{
@@ -20,6 +21,15 @@ public class Pescador {
 		capitao = false;
 		regularizado = false;
 		alfabetizacao = false;
+		alfabetizando = false;
+	}
+
+	public boolean isAlfabetizando() {
+		return alfabetizando;
+	}
+
+	public void setAlfabetizando(boolean alfabetizando) {
+		this.alfabetizando = alfabetizando;
 	}
 
 	public boolean isAlfabetizacao() {
