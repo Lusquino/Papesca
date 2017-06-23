@@ -5,6 +5,7 @@ public class Pescador {
 	public int tokens;
 	public int pontosDeVitoria;
 	public int pontosDeCarencia;
+	public int[] seguroDefeso;
 	public boolean ees;
 	public boolean capitao;
 	public boolean regularizado;
@@ -22,6 +23,19 @@ public class Pescador {
 		regularizado = false;
 		alfabetizacao = false;
 		alfabetizando = false;
+		seguroDefeso = new int[4];
+		for(int i = 0; i<seguroDefeso.length; i++)
+		{
+			seguroDefeso[i] = 0;
+		}
+	}
+
+	public int getSeguroDefeso(int peixe) {
+		return seguroDefeso[peixe];
+	}
+
+	public void setSeguroDefeso(int peixe, int quantidade) {
+		seguroDefeso[peixe] = quantidade;
 	}
 
 	public boolean isAlfabetizando() {

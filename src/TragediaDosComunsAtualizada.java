@@ -2,11 +2,11 @@ import java.util.Random;
 
 public class TragediaDosComunsAtualizada {
 	
-	static public Pescador[] pescadores = new Pescador[5];
+	static public Pescador[] pescadores;
 	static public Peixe[] peixes = new Peixe[4];
 	
 	public static void main(String[] args) {
-			int jogadores = 5;
+			int jogadores = 6;
 			int partidas = 10;
 			int turnos = 0;
 			int vitoria = 0;
@@ -22,7 +22,9 @@ public class TragediaDosComunsAtualizada {
 			int peixeDPescado = 0;
 			int peixeDExtinto = 0;
 			int[] resultados = new int[13];
+			int[] placarJogadores = new int[2*jogadores];
 			boolean regraAdicional = true;
+			pescadores = new Pescador[jogadores];
 			
 			for(int j=0; j<partidas; j++)
 			{
@@ -32,24 +34,50 @@ public class TragediaDosComunsAtualizada {
 				fracasso += resultados[2];
 				sustentabilidade += resultados[3];
 				cooperacao += resultados[4];
-				peixeAPescado = resultados[9];
-				peixeAExtinto = resultados[5];
-				peixeBPescado = resultados[10];
-				peixeBExtinto = resultados[6];
-				peixeCPescado = resultados[11];
-				peixeCExtinto = resultados[7];
-				peixeDPescado = resultados[12];
-				peixeDExtinto = resultados[8];
+				peixeAPescado += resultados[9];
+				peixeAExtinto += resultados[5];
+				peixeBPescado += resultados[10];
+				peixeBExtinto += resultados[6];
+				peixeCPescado += resultados[11];
+				peixeCExtinto += resultados[7];
+				peixeDPescado += resultados[12];
+				peixeDExtinto += resultados[8];
+				
+				for(int i=0; i<jogadores; i++)
+				{
+					placarJogadores[i] += resultados[13+2*i];
+					placarJogadores[i] += resultados[14+2*i];
+				}
 			}
-		
-			System.out.println("Com " + jogadores + " jogadores, a média de turnos para o jogo acabar foi de "
-					+(turnos/partidas) + ", a média de pontos de vitória do melhor jogador foi de " +(vitoria/partidas)
-					+ " \ne a do pior de " + (fracasso/partidas) + ". A sustentabilidade média foi " 
-					+ (sustentabilidade/partidas) + " e o nível médio de cooperação foi " + (cooperacao/partidas) + ".");
 			
-			System.out.println("\nEstatísticas médias:");
+			turnos /= partidas;
+			vitoria /= partidas;
+			fracasso /= partidas;
+			sustentabilidade /= partidas;
+			cooperacao /= partidas;
+			peixeAPescado /= partidas;
+			peixeAExtinto /= partidas;
+			peixeBPescado /= partidas;
+			peixeBExtinto /= partidas;
+			peixeCPescado /= partidas;
+			peixeCExtinto /= partidas;
+			peixeDPescado /= partidas;
+			peixeDExtinto /= partidas;
 			
-			System.out.println("O peixe A foi pescado " + peixeAPescado + " vezes e atingiu a taxa de extinção " 
+			for(int i = 0; i<jogadores; i++)
+			{
+				placarJogadores[i] /= partidas;
+			}
+
+				
+			System.out.println("Estatísticas médias:");
+					
+			System.out.println("\nCom " + jogadores + " jogadores, a média de turnos para o jogo acabar foi de "
+					+ turnos + ", a média de pontos de vitória do melhor jogador foi de " + vitoria
+					+ " \ne a do pior de " + fracasso + ". A sustentabilidade média foi " 
+					+ sustentabilidade + " e o nível médio de cooperação foi " + cooperacao + ".");
+			
+			System.out.println("\nO peixe A foi pescado " + peixeAPescado + " vezes e atingiu a taxa de extinção " 
 					+ peixeAExtinto);
 			System.out.println("O peixe B foi pescado " + peixeBPescado + " vezes e atingiu a taxa de extinção " 
 					+ peixeBExtinto);
@@ -57,6 +85,14 @@ public class TragediaDosComunsAtualizada {
 					+ peixeCExtinto);
 			System.out.println("O peixe D foi pescado " + peixeDPescado + " vezes e atingiu a taxa de extinção " 
 					+ peixeDExtinto);
+			
+			System.out.print("\n");
+			
+			for(int i = 0; i<jogadores; i++)
+			{
+				System.out.println("O jogador " + (i+1) + " terminou com " + placarJogadores[2*i] + " pontos de vitória e "
+						+ placarJogadores[2*i + 1] + " pontos de carência.");
+			}
 	}
 	
 	public static int[] jogo(int jogadores, boolean regraAdicional)
@@ -172,13 +208,56 @@ public class TragediaDosComunsAtualizada {
 						
 						boolean ufrj = false;
 						while(!ufrj)
-						{
-							int projeto = rand.nextInt(6);
+						{	
+							//eja
+							if(!pescadores[i].isAlfabetizacao())
+							{
+								if(pescadores[i].isAlfabetizando())
+								{
+									pescadores[i].setAlfabetizacao(true);
+								}
+								else
+								{
+									pescadores[i].setAlfabetizando(true);
+								}
+								ufrj = true;
+								break;
+							}
 							
+							//regularização
+							if(!pescadores[i].isRegularizado())
+							{
+								pescadores[i].setRegularizado(true);
+								ufrj = true;
+								break;
+							}
+							
+							//seguro defeso
+							if((pescadores[i].isAlfabetizacao())&&(pescadores[i].isRegularizado())
+									&&(pescadores[i].getSeguroDefeso(peixeEmDefeso())==3))
+							{
+								pescadores[i].setTemer(pescadores[i].getTemer()+4);
+								pescadores[i].setSeguroDefeso(peixeEmDefeso(), 0);
+								ufrj = true;
+								break;
+							}
+							
+							//capitão
+							if((!(pescadores[i].isCapitao()))&&(pescadores[i].getTemer()>4))
+							{
+								pescadores[i].setCapitao(true);
+								pescadores[i].setTemer(pescadores[i].getTemer()-4);
+								ufrj = true;
+								break;
+							}
+							
+							int projeto = rand.nextInt(6);
+
 							//gestão social da pesca
 							if((projeto == 0)&&!(pescadores[i].isEes())&&!(projetoBloqueado==0))
 							{
 								pescadores[i].setEes(true);
+								pescadores[i].setPontosDeVitoria(pescadores[i].getPontosDeVitoria()+1);
 								ufrj = true;
 							}
 							
@@ -186,12 +265,14 @@ public class TragediaDosComunsAtualizada {
 							if((projeto == 1)&&!(pescadores[i].isCapitao())&&!(projetoBloqueado==1))
 							{
 								pescadores[i].setCapitao(true);
+								pescadores[i].setPontosDeVitoria(pescadores[i].getPontosDeVitoria()+1);
 								ufrj = true;
 							}
 							
 							//beneficiamento de pescado
 							if((projeto == 2)&&(pescadores[i].isEes())&&!(projetoBloqueado==1))
 							{
+								pescadores[i].setPontosDeVitoria(pescadores[i].getPontosDeVitoria()+1);
 								beneficiamento = 1;
 								ufrj = true;
 							}
@@ -199,6 +280,7 @@ public class TragediaDosComunsAtualizada {
 							//educação ambiental
 							if((projeto == 3)&&!(projetoBloqueado==2))
 							{
+								pescadores[i].setPontosDeVitoria(pescadores[i].getPontosDeVitoria()+1);
 								educacaoAmbiental = true;
 								ufrj = true;
 							}
@@ -206,13 +288,16 @@ public class TragediaDosComunsAtualizada {
 							//beneficiamento de pescado
 							if((projeto == 4)&&(beneficiamento == 1)&&!(projetoBloqueado==2))
 							{
+								pescadores[i].setPontosDeVitoria(pescadores[i].getPontosDeVitoria()+1);
 								beneficiamento = 2;
 								ufrj = true;
 							}
 							
 							//cooperativa
-							if((projeto == 5)&&(pescadores[i].isRegularizado())&&(pescadores[i].isEes())&&(existeCapitao())&&!(projetoBloqueado==3))
+							if((projeto == 5)&&(pescadores[i].isRegularizado())&&(pescadores[i].isEes())
+									&&(existeCapitao())&&!(projetoBloqueado==3))
 							{
+								pescadores[i].setPontosDeVitoria(pescadores[i].getPontosDeVitoria()+1);
 								incubadora = true;
 								cooperativa[i] = true;
 								ufrj = true;
@@ -257,7 +342,7 @@ public class TragediaDosComunsAtualizada {
 			{
 				for(int j=0; j < peixes[i].getPescadores().length; j++)
 				{
-					for(int k=0; k <peixes[i].getPescadores()[j]; k++)
+					for(int k=0; k < peixes[i].getPescadores()[j]; k++)
 					{
 						int dado = rand.nextInt(5);
 						
@@ -266,6 +351,13 @@ public class TragediaDosComunsAtualizada {
 							peixes[i].setPescados(peixes[i].getPescados()+1);
 							peixes[i].setPescadosTotais(peixes[i].getPescadosTotais()+1);
 							
+							//ganhando pontos de defeso
+							if(!peixes[i].isDefeso())
+							{
+								pescadores[j].setSeguroDefeso(i, pescadores[i].getSeguroDefeso(i)+1);
+							}
+							
+							//aumentando o valor de mercado, caso o pescador esteja cooperativado
 							if((cooperativa[j])&&!(barcoAvariado))
 							{
 								pescadores[j].setTemer(pescadores[j].getTemer()+2*(peixes[i].getValor())+beneficiamento);
@@ -305,7 +397,7 @@ public class TragediaDosComunsAtualizada {
 				}
 			}
 			
-			//
+			//trocando dinheiro por ponto de vitórias
 			if(regraAdicional)
 			{
 				for(int i=0; i< pescadores.length; i++)
@@ -333,6 +425,8 @@ public class TragediaDosComunsAtualizada {
 				}
 			}
 			
+			
+			//defeso
 			for(int i= 0; i < peixes.length; i++)
 			{
 				if(peixes[i].isDefeso())
@@ -382,7 +476,7 @@ public class TragediaDosComunsAtualizada {
 			}
 		}
 		
-		int[] resultados =  new int[13];
+		int[] resultados =  new int[13+2*pescadores.length];
 		resultados[0]  = turnos;
 		resultados[1]  = pescadores[obterMelhorJogador()].getPontosDeVitoria();
 		resultados[2]  = pescadores[obterPiorJogador()].getPontosDeVitoria();
@@ -397,7 +491,24 @@ public class TragediaDosComunsAtualizada {
 		resultados[11] = peixes[2].getPescadosTotais();
 		resultados[12] = peixes[3].getPescadosTotais();
 		
+		for(int i = 0; i<pescadores.length; i++)
+		{
+			resultados[12+2*i] = pescadores[i].getPontosDeVitoria();
+			resultados[13+2*i] = pescadores[i].getPontosDeCarencia();
+		}
+		
+		
 		return resultados;
+	}
+	
+	public static int peixeEmDefeso()
+	{
+		for(int i=0; i<peixes.length; i++)
+		{
+			if(peixes[i].isDefeso()){return i;}
+		}
+		
+		return peixes.length;
 	}
 	
 	public static boolean faliu()
